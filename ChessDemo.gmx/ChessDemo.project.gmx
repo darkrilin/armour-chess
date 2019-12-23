@@ -13,21 +13,14 @@
     <sound>sound\snd_cancel</sound>
   </sounds>
   <sprites name="sprites">
-    <sprites name="Boards">
-      <sprite>sprites\spr_board0</sprite>
-      <sprite>sprites\spr_board1</sprite>
-      <sprite>sprites\spr_board2</sprite>
-      <sprite>sprites\spr_board3</sprite>
-      <sprite>sprites\spr_board4</sprite>
-      <sprite>sprites\spr_board5</sprite>
-    </sprites>
-    <sprites name="Pieces">
-      <sprite>sprites\spr_rook_white</sprite>
-      <sprite>sprites\spr_queen_white</sprite>
-      <sprite>sprites\spr_pawn_white</sprite>
-      <sprite>sprites\spr_king_white</sprite>
-      <sprite>sprites\spr_knight_white</sprite>
-      <sprite>sprites\spr_bishop_white</sprite>
+    <sprite>sprites\spr_board</sprite>
+    <sprites name="pieces">
+      <sprite>sprites\spr_king</sprite>
+      <sprite>sprites\spr_queen</sprite>
+      <sprite>sprites\spr_rook</sprite>
+      <sprite>sprites\spr_bishop</sprite>
+      <sprite>sprites\spr_knight</sprite>
+      <sprite>sprites\spr_pawn</sprite>
     </sprites>
     <sprites name="Effects">
       <sprite>sprites\spr_highlight</sprite>
@@ -37,9 +30,7 @@
       <sprite>sprites\spr_set_board</sprite>
     </sprites>
   </sprites>
-  <backgrounds name="background">
-    <background>background\bk_0</background>
-  </backgrounds>
+  <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
     <script>scripts\Documentation.gml</script>
@@ -76,7 +67,7 @@
     </objects>
   </objects>
   <rooms name="rooms">
-    <room>rooms\room0</room>
+    <room>rooms\rm_game</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>

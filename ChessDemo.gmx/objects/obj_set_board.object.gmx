@@ -53,14 +53,8 @@ image_alpha = 0;
 
 //change board
 if (button_click() &amp;&amp; image_alpha&gt;0.9){
-    obj_chess.board_spr++;
-    
-    //wrap
-    var arr_len = array_length_1d(obj_chess.boards);
-    
-    if (obj_chess.board_spr &gt;= arr_len) obj_chess.board_spr = 0;
-    
-    if (obj_chess.board_spr &lt; 0) obj_chess.board_spr = arr_len - 1;
+    // make sure it wraps
+    obj_chess.board_spr = (obj_chess.board_spr + 1) % sprite_get_number(spr_board);
 }
 </string>
           </argument>

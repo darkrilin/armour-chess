@@ -32,8 +32,8 @@ That array contains the info for that cell:
 
 info.team: player the piece belongs to
             -1 = empty cell
-            0 = 1st player
-            1 = 2nd player
+            0 = 1st player (white)
+            1 = 2nd player (black)
             
 info.type: type of piece, enum "type"
 
@@ -57,7 +57,7 @@ board_w = 8; //number of cells in x
 board_h = 8; //number of cells in y
 board = ds_grid_create(board_w, board_h);
 
-cell_size = 32; //size of each cell in pixels
+cell_size = 64; //size of each cell in pixels
 
 //position
 draw_x = 64; //where to draw the grid in the room
@@ -66,11 +66,11 @@ draw_y = 64;
 //properties of each cell
 enum info{
     team,   //team it belongs to
-    type  //type of piece, constants below
+    type    //type of piece, constants below
 }
 
 //types of pieces
-enum type{
+enum type {
     empty,
     pawn,
     rook,
@@ -81,27 +81,16 @@ enum type{
 }
 
 //board sprites for customization
-boards[0] = spr_board0;
-boards[1] = spr_board1;
-boards[2] = spr_board2;
-boards[3] = spr_board3;
-boards[4] = spr_board4;
-boards[5] = spr_board5;
-
-board_spr = 0; //current board sprite selected from the array above
+board_spr = 0; // index of the current board sprite
 
 //sprites &amp; colors
 //sprite used for each piece type
-sprites[type.pawn] = spr_pawn_white;
-sprites[type.rook] = spr_rook_white;
-sprites[type.knight] = spr_knight_white;
-sprites[type.bishop] = spr_bishop_white;
-sprites[type.king] = spr_king_white;
-sprites[type.queen] = spr_queen_white;
-
-//color of the teams' pieces
-colors[0] = c_white;
-colors[1] = c_black;
+sprites[type.pawn]   = spr_pawn;
+sprites[type.rook]   = spr_rook;
+sprites[type.knight] = spr_knight;
+sprites[type.bishop] = spr_bishop;
+sprites[type.king]   = spr_king;
+sprites[type.queen]  = spr_queen;
 
 //fill empty
 //create an array with properties of an empty cell
@@ -118,10 +107,10 @@ var _pawn;
 _pawn[info.type] = type.pawn; //set type to type.pawn
 //loop through horizontal cells
 for(var i=0; i&lt;board_w; i++){
-    //place pawns for player 1
+    //place pawns for player 1 (black)
     _pawn[info.team] = 0;
     ds_grid_set(board, i, 1, array_new(_pawn));
-    //place pawns for player 2
+    //place pawns for player 2 (white)
     _pawn[info.team] = 1;
     ds_grid_set(board, i, board_h - 2, array_new(_pawn));
 }
@@ -133,42 +122,42 @@ var _array;
 _array[info.type] = type.rook;
 _array[info.team] = 0;
 ds_grid_set(board, 0, 0, array_new(_array));
-ds_grid_set(board, board_w - 1, 0, array_new(_array));
+ds_grid_set(board, board_w-1, 0, array_new(_array));
 _array[info.team] = 1;
-ds_grid_set(board, 0, board_h - 1, array_new(_array));
-ds_grid_set(board, board_w - 1, board_h - 1, array_new(_array));
+ds_grid_set(board, 0, board_h-1, array_new(_array));
+ds_grid_set(board, board_w-1, board_h-1, array_new(_array));
 
 //place knights
 _array[info.type] = type.knight;
 _array[info.team] = 0;
 ds_grid_set(board, 1, 0, array_new(_array));
-ds_grid_set(board, board_w - 2, 0, array_new(_array));
+ds_grid_set(board, board_w-2, 0, array_new(_array));
 _array[info.team] = 1;
-ds_grid_set(board, 1, board_h - 1, array_new(_array));
-ds_grid_set(board, board_w - 2, board_h - 1, array_new(_array));
+ds_grid_set(board, 1, board_h-1, array_new(_array));
+ds_grid_set(board, board_w-2, board_h-1, array_new(_array));
 
 //place bishops
 _array[info.type] = type.bishop;
 _array[info.team] = 0;
 ds_grid_set(board, 2, 0, array_new(_array));
-ds_grid_set(board, board_w - 3, 0, array_new(_array));
+ds_grid_set(board, board_w-3, 0, array_new(_array));
 _array[info.team] = 1;
-ds_grid_set(board, 2, board_h - 1, array_new(_array));
-ds_grid_set(board, board_w - 3, board_h - 1, array_new(_array));
+ds_grid_set(board, 2, board_h-1, array_new(_array));
+ds_grid_set(board, board_w-3, board_h-1, array_new(_array));
 
 //place queen
 _array[info.type] = type.queen;
 _array[info.team] = 0;
 ds_grid_set(board, 3, 0, array_new(_array));
 _array[info.team] = 1;
-ds_grid_set(board, 3, board_h - 1, array_new(_array));
+ds_grid_set(board, 3, board_h-1, array_new(_array));
 
 //place king
 _array[info.type] = type.king;
 _array[info.team] = 0;
 ds_grid_set(board, 4, 0, array_new(_array));
 _array[info.team] = 1;
-ds_grid_set(board, 4, board_h - 1, array_new(_array));
+ds_grid_set(board, 4, board_h-1, array_new(_array));
 
 
 
@@ -194,13 +183,20 @@ ds_grid_set(board, 4, board_h - 1, array_new(_array));
           <argument>
             <kind>1</kind>
             <string>///game
+
+// Note:
+// 0 = player 1 = black
+// 1 = player 2 = white
+
+// player 2 goes first because player 2 is white and it's just easiest to switch the colours than adjust all the other code
+
 randomize();
 
 //font
 draw_set_font(ft_chess);
 
 //turns &amp; modes
-turn = choose(0, 1); //Which player's turn is it? Choose randomly for a start.
+turn = 1; //White always starts first
 mode = 0; //mode/state:
             //0 - selecting a piece
             //1 - selecting a cell to move that piece to
@@ -217,7 +213,6 @@ sel_y = 0;
 //lost
 lost[0] = ds_list_create(); //lost pieces by player 1
 lost[1] = ds_list_create(); //lost pieces by player 2
-                            //only ded bois in this list. lol
 
 //check
 check[0] = false; //is player 1 in check?
@@ -582,10 +577,10 @@ if (mouse_check_button_pressed(mb_left)){
 //draw_text(5, 20, check[1]);
 
 //draw board
-draw_sprite(boards[board_spr], 0, draw_x, draw_y);
+draw_sprite(spr_board, board_spr, draw_x, draw_y);
 
 //mouse highlight
-if (!mouse_out &amp;&amp; win==-1){
+if (!mouse_out &amp;&amp; win == -1){
     //get board cell
     var _array, _type, _team;
     _array = board[# cell_x, cell_y];
@@ -596,10 +591,10 @@ if (!mouse_out &amp;&amp; win==-1){
     var _xx = draw_x + (cell_x*cell_size);
     var _yy = draw_y + (cell_y*cell_size);
     
-    if (_team==turn){
+    if (_team == turn &amp;&amp; mode != 2) {
         draw_highlight(_xx, _yy, cursor_color_team);
-    }else{
-        draw_highlight(_xx, _yy, cursor_color_simple);
+    } else {
+        //draw_highlight(_xx, _yy, cursor_color_simple);
     }
 }
 
@@ -608,7 +603,6 @@ if (check_show){
     draw_highlight(checking_x, checking_y, check_color);
     draw_highlight(checked_x, checked_y, check_color);
 }
-
 
 //draw pieces
 for(var h=0; h&lt;board_h; h++){
@@ -632,7 +626,7 @@ for(var h=0; h&lt;board_h; h++){
         }
         //if not empty, draw piece
         if (_type!=type.empty &amp;&amp; !_moved){
-            draw_sprite_ext(sprites[_type], 0, _xx, _yy, 1, 1, 0, colors[_team], 1);
+            draw_sprite_ext(sprites[_type], 1-_team, _xx, _yy, 1, 1, 0, -1, 1);
         }
     }
 }
@@ -644,7 +638,7 @@ if (mode==2){
     var _move_py = draw_y + cell_size*move_y;
     
     //draw sprite
-    draw_sprite_ext(sprites[sel_type], 0, anim_x, anim_y, 1, 1, 0, colors[turn], 1);
+    draw_sprite_ext(sprites[sel_type], 1-turn, anim_x, anim_y, 1, 1, 0, -1, 1);
     
     //movement x/y
     //var _xx = _move_px - anim_x;
@@ -655,7 +649,7 @@ if (mode==2){
     anim_y = lerp(anim_y, _move_py, anim_speed);
     
     //set animated false
-    if (point_distance(anim_x, anim_y, _move_px, _move_py)&lt;=1) animated = true;
+    if (point_distance(anim_x, anim_y, _move_px, _move_py) &lt;= 1) animated = true;
 }
 
 //draw lost pieces
@@ -669,7 +663,7 @@ for(var i=0; i&lt;ds_list_size(lost[0]); i++){
     var _lost = _list[| i];
     var _lost_type = _lost[info.type];
     
-    draw_sprite_ext(sprites[_lost_type], 0, draw_x - lost_draw_marg, draw_y + lost_draw_marg*i, lost_size, lost_size, 0, -1, 1);
+    draw_sprite_ext(sprites[_lost_type], 1, draw_x - lost_draw_marg, draw_y + lost_draw_marg*i, lost_size, lost_size, 0, -1, 1);
 }
 
 //1 team
@@ -679,7 +673,7 @@ for(var i=0; i&lt;ds_list_size(lost[1]); i++){
     var _lost = _list[| i];
     var _lost_type = _lost[info.type];
     
-    draw_sprite_ext(sprites[_lost_type], 0, draw_x + cell_size*board_w, draw_y + lost_draw_marg*i, lost_size, lost_size, 0, c_black, 1);
+    draw_sprite_ext(sprites[_lost_type], 0, draw_x + cell_size*board_w, draw_y + lost_draw_marg*i, lost_size, lost_size, 0, -1, 1);
 }
 
 //draw turn
@@ -687,28 +681,28 @@ var marg = 24;
 
 if (win==-1){
     if (turn==0){
-        draw_text_center(draw_x + (board_w*cell_size)/2, draw_y - marg, "White's Turn", 1, 1, 0, c_white, 1);
+        draw_text_center(draw_x + (board_w*cell_size)/2, draw_y - marg, "Black's Turn", 1, 1, 0, -1, 1);
     }
     else if (turn==1){
-        draw_text_center(draw_x + (board_w*cell_size)/2, draw_y + (board_h*cell_size) + marg, "Black's Turn", 1, 1, 0, c_black, 1);
+        draw_text_center(draw_x + (board_w*cell_size)/2, draw_y + (board_h*cell_size) + marg, "White's Turn", 1, 1, 0, -1, 1);
     }
 }
 
 //draw won
 if (win==0){
-    draw_text_center(draw_x + (board_w*cell_size)/2, draw_y - marg, "White Won!", 1, 1, 0, c_white, 1);
+    draw_text_center(draw_x + (board_w*cell_size)/2, draw_y - marg, "Black Won!", 1, 1, 0, -1, 1);
 }
 else if (win==1){
-    draw_text_center(draw_x + (board_w*cell_size)/2, draw_y + (board_h*cell_size) + marg, "Black Won!", 1, 1, 0, c_black, 1);
+    draw_text_center(draw_x + (board_w*cell_size)/2, draw_y + (board_h*cell_size) + marg, "White Won!", 1, 1, 0, -1, 1);
 }
 
 //draw check text
 if (win==-1){
     if (check[0]){
-        draw_text_center(draw_x + (board_w*cell_size)/2, draw_y - 8, "White is in check!", 0.7, 0.7, 0, c_white, 1);
+        draw_text_center(draw_x + (board_w*cell_size)/2, draw_y - 8, "Black is in check!", 0.7, 0.7, 0, -1, 1);
     }
     else if (check[1]){
-        draw_text_center(draw_x + (board_w*cell_size)/2, draw_y + (board_h*cell_size) + 8, "Black is in check!", 0.7, 0.7, 0, c_black, 1);
+        draw_text_center(draw_x + (board_w*cell_size)/2, draw_y + (board_h*cell_size) + 8, "White is in check!", 0.7, 0.7, 0, -1, 1);
     }
 }
 
