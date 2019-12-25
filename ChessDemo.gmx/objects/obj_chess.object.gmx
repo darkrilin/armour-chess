@@ -25,7 +25,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///board and pieces
+            <string>/// Board and pieces
 /*
 In the main chess grid, each cell contains an array.
 That array contains the info for that cell:
@@ -52,24 +52,25 @@ The system goes through 3 modes/states:
 
 */
 
-//board grid
-board_w = 8; //number of cells in x
-board_h = 8; //number of cells in y
+// board grid
+board_w = 8; // number of cells in x
+board_h = 8; // number of cells in y
 board = ds_grid_create(board_w, board_h);
 
-cell_size = 64; //size of each cell in pixels
+cell_size = 64; // size of each cell in pixels
 
-//position
-draw_x = 64; //where to draw the grid in the room
+// position
+draw_x = 64; // where to draw the grid in the room
 draw_y = 64; 
 
-//properties of each cell
-enum info{
-    team,   //team it belongs to
-    type    //type of piece, constants below
+// properties of each cell
+enum info {
+    team,   // team it belongs to
+    type,   // type of piece, constants below
+    armour  // how much armour the piece has
 }
 
-//types of pieces
+// types of pieces
 enum type {
     empty,
     pawn,
@@ -80,11 +81,11 @@ enum type {
     queen
 }
 
-//board sprites for customization
+// board sprites for customization
 board_spr = 0; // index of the current board sprite
 
-//sprites &amp; colors
-//sprite used for each piece type
+// sprites &amp; colors
+// sprite used for each piece type
 sprites[type.pawn]   = spr_pawn;
 sprites[type.rook]   = spr_rook;
 sprites[type.knight] = spr_knight;
@@ -92,69 +93,76 @@ sprites[type.bishop] = spr_bishop;
 sprites[type.king]   = spr_king;
 sprites[type.queen]  = spr_queen;
 
-//fill empty
-//create an array with properties of an empty cell
-//fill grid with that array
+// fill empty
+// create an array with properties of an empty cell
+// fill grid with that array
 var _empty;
 _empty[info.team] = -1;
 _empty[info.type] = type.empty;
+_empty[info.armour] = -1;
 
 ds_grid_set_region(board, 0, 0, board_w-1, board_h-1, array_new(_empty));
 
-//place pawns
-//pawn array
+// place pawns
+// pawn array
 var _pawn;
-_pawn[info.type] = type.pawn; //set type to type.pawn
-//loop through horizontal cells
-for(var i=0; i&lt;board_w; i++){
-    //place pawns for player 1 (black)
+_pawn[info.type] = type.pawn; // set type to type.pawn
+_pawn[info.armour] = 1;
+// loop through horizontal cells
+for(var i=0; i&lt;board_w; i++) {
+    // place pawns for player 1 (black)
     _pawn[info.team] = 0;
     ds_grid_set(board, i, 1, array_new(_pawn));
-    //place pawns for player 2 (white)
+    // place pawns for player 2 (white)
     _pawn[info.team] = 1;
     ds_grid_set(board, i, board_h - 2, array_new(_pawn));
 }
 
-//place other pieces
+// place other pieces
 var _array;
 
-//place rooks
+// place rooks
 _array[info.type] = type.rook;
 _array[info.team] = 0;
+_array[info.armour] = 2;
 ds_grid_set(board, 0, 0, array_new(_array));
 ds_grid_set(board, board_w-1, 0, array_new(_array));
 _array[info.team] = 1;
 ds_grid_set(board, 0, board_h-1, array_new(_array));
 ds_grid_set(board, board_w-1, board_h-1, array_new(_array));
 
-//place knights
+// place knights
 _array[info.type] = type.knight;
 _array[info.team] = 0;
+_array[info.armour] = 3;
 ds_grid_set(board, 1, 0, array_new(_array));
 ds_grid_set(board, board_w-2, 0, array_new(_array));
 _array[info.team] = 1;
 ds_grid_set(board, 1, board_h-1, array_new(_array));
 ds_grid_set(board, board_w-2, board_h-1, array_new(_array));
 
-//place bishops
+// place bishops
 _array[info.type] = type.bishop;
 _array[info.team] = 0;
+_array[info.armour] = 4;
 ds_grid_set(board, 2, 0, array_new(_array));
 ds_grid_set(board, board_w-3, 0, array_new(_array));
 _array[info.team] = 1;
 ds_grid_set(board, 2, board_h-1, array_new(_array));
 ds_grid_set(board, board_w-3, board_h-1, array_new(_array));
 
-//place queen
+// place queen
 _array[info.type] = type.queen;
 _array[info.team] = 0;
+_array[info.armour] = 5;
 ds_grid_set(board, 3, 0, array_new(_array));
 _array[info.team] = 1;
 ds_grid_set(board, 3, board_h-1, array_new(_array));
 
-//place king
+// place king
 _array[info.type] = type.king;
 _array[info.team] = 0;
+_array[info.armour] = 6;
 ds_grid_set(board, 4, 0, array_new(_array));
 _array[info.team] = 1;
 ds_grid_set(board, 4, board_h-1, array_new(_array));
@@ -182,7 +190,7 @@ ds_grid_set(board, 4, board_h-1, array_new(_array));
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///game
+            <string>/// Game
 
 // Note:
 // 0 = player 1 = black
@@ -207,6 +215,7 @@ win = -1; //Who won? 0 if player one, 1 if player two. -1 if game not over yet
 
 //selected
 sel_type = type.empty; //which type of piece is selected?
+sel_armour = -1;
 sel_x = 0; //what is the position of the selected cell?
 sel_y = 0;
 
@@ -256,7 +265,7 @@ animated = false;
 anim_x = 0;
 anim_y = 0;
 
-anim_speed = 0.3;
+anim_speed = 0.2;
 </string>
           </argument>
         </arguments>
@@ -303,83 +312,82 @@ check_show = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///game
-//exit if won
-if (win!=-1){  
-    //game restart on click
+            <string>// /game
+// exit if won
+if (win!=-1) {  
+    // game restart on click
     if (mouse_check_button_pressed(mb_left)) room_restart();
-    
     exit;
 }
 
-//mouse position
+// mouse position
 cell_x = (mouse_x - draw_x) div cell_size;
 cell_y = (mouse_y - draw_y) div cell_size;
 
-//mouse out of board
+// mouse out of board
 mouse_out = cell_x &lt; 0 || cell_y &lt; 0 || cell_x &gt;= board_w || cell_y &gt;= board_h;
 
-//after animation complete
-if (mode==2 &amp;&amp; animated){
-    //get move piece
+// after animation complete
+if (mode==2 &amp;&amp; animated) {
+    // get move piece
     var _move_ar = board[# move_x, move_y];
     var _move_team = _move_ar[info.team];
     
-    //defeat if enemy present
+    // defeat if enemy present
     if (_move_team==!turn) defeat_piece(move_x, move_y);
     
-    //move piece
-    board_set_cell(board, move_x, move_y, turn, sel_type);
-    board_set_cell(board, sel_x, sel_y, -1, type.empty);
+    // move piece
+    board_set_cell(board, move_x, move_y, turn, sel_type, sel_armour);
+    board_set_cell(board, sel_x, sel_y, -1, type.empty, -1);
     
-    //clear moveable grid after checking
+    // clear moveable grid after checking
     check[!turn] = false;
     moveable_check(moveable, move_x, move_y, board, sel_type);
     moveable_clear();
     
-    //change turn
+    // change turn
     turn = !turn;
     mode = 0;
-    //if check, check if the other side is lost
-    if (check[turn]){
-        //vars to check their loss
+    // if check, check if the other side is lost
+    if (check[turn]) {
+        // vars to check their loss
         var can_be_defeated = false;
         var king_can_move = false;
-        //apply all_moveable grid to check if the current piece can be defeated
+        // apply all_moveable grid to check if the current piece can be defeated
         var all_moveable = ds_grid_create(board_w, board_h);
-        for(var _h=0; _h&lt;board_h; _h++){
-            for(var _w=0; _w&lt;board_w; _w++){
-                //get array
+        for(var _h=0; _h&lt;board_h; _h++) {
+            for(var _w=0; _w&lt;board_w; _w++) {
+                // get array
                 var _ar = board[# _w, _h];
                 var _team = _ar[info.team];
                 var _type = _ar[info.type];
                 
-                //check
-                if (_team==turn){
+                // check
+                if (_team == turn) {
                     moveable_check(all_moveable, _w, _h, board, _type);
                 }
             }
         }
-        //check if piece can be defeated
+        // check if piece can be defeated
         can_be_defeated = all_moveable[# move_x, move_y];
-        //destroy grid
+        // destroy grid
         ds_grid_destroy(all_moveable);
-        //--------check if king can move somewhere---------
-        //get all possible moves of the opponent
+        // --------check if king can move somewhere---------
+        // get all possible moves of the opponent
         turn = !turn;
         
         all_moveable = ds_grid_create(board_w, board_h);
         
         var all_moveable = ds_grid_create(board_w, board_h);
-        for(var _h=0; _h&lt;board_h; _h++){
-            for(var _w=0; _w&lt;board_w; _w++){
-                //get array
+        for(var _h=0; _h&lt;board_h; _h++) {
+            for(var _w=0; _w&lt;board_w; _w++) {
+                // get array
                 var _ar = board[# _w, _h];
                 var _team = _ar[info.team];
                 var _type = _ar[info.type];
                 
-                //check
-                if (_team==turn){
+                // check
+                if (_team==turn) {
                     moveable_check(all_moveable, _w, _h, board, _type);
                 }
             }
@@ -387,44 +395,44 @@ if (mode==2 &amp;&amp; animated){
         
         turn = !turn;
         
-        //get king position
+        // get king position
         var king_x = -1, king_y = -1;
         
-        for(var _h=0; _h&lt;board_h; _h++){
-            for(var _w=0; _w&lt;board_w; _w++){
-                //get array
+        for(var _h=0; _h&lt;board_h; _h++) {
+            for(var _w=0; _w&lt;board_w; _w++) {
+                // get array
                 var _ar = board[# _w, _h];
                 var _team = _ar[info.team];
                 var _type = _ar[info.type];
                 
-                if (_type==type.king &amp;&amp; _team==turn){
+                if (_type==type.king &amp;&amp; _team==turn) {
                     king_x = _w;
                     king_y = _h;
                     break;
                 }
             }
-            if (king_x!=-1) break;
+            if (king_x != -1) break;
         }
         
-        //loop through all 8 directional movements
-        for(var _yy = -1; _yy &lt;= 1; _yy++){
-            for(var _xx = -1; _xx &lt;= 1; _xx++){
-                //check if out of bounds
+        // loop through all 8 directional movements
+        for(var _yy = -1; _yy &lt;= 1; _yy++) {
+            for(var _xx = -1; _xx &lt;= 1; _xx++) {
+                // check if out of bounds
                 var out_bound = false;
                 if (king_x+_xx &lt; 0 || king_x+_xx &gt;= board_w || king_y+_yy &lt; 0 || king_y+_yy &gt;= board_h) out_bound = true;
-                if (!out_bound){
-                    //if no one can move there
+                if (!out_bound) {
+                    // if no one can move there
                     if (!all_moveable[# king_x + _xx, king_y + _yy]) king_can_move = true;
-                    //if king can move there, check for friendly pieces
-                    if (king_can_move){
-                        //get array
+                    // if king can move there, check for friendly pieces
+                    if (king_can_move) {
+                        // get array
                         var _ar = board[# king_x + _xx, king_y + _yy];
                         var _team = _ar[info.team];
                         var _type = _ar[info.type];
                         
                         if (_team==turn) king_can_move = false;
                         
-                        //break if king can move
+                        // break if king can move
                         if (king_can_move) break;
                     }
                 }
@@ -432,123 +440,148 @@ if (mode==2 &amp;&amp; animated){
             if (king_can_move) break;
         }
         
-        //check if the player has any chances
-        if (!king_can_move &amp;&amp; !can_be_defeated){
+        /**/
+        show_debug_message("king_can_move: " + string(king_can_move));
+        show_debug_message("can_be_defeated: " + string(can_be_defeated));
+        /**/
+        
+        // check if the player has any chances
+        if (!king_can_move &amp;&amp; !can_be_defeated) {
             win = !turn;
             audio_play_sound(snd_win, 10, false);
             check_show = true;
         }
         
-        //check
+        // check
         check[turn] = true;
     }
 }
 
-//exit if mouse out of board
+// exit if mouse out of board
 if (mouse_out) exit;
 
-//get board cell
+// get board cell
 var _array, _type, _team;
 _array = board[# cell_x, cell_y];
 _team = _array[info.team];
 _type = _array[info.type];
+_armour = _array[info.armour];
 
-//if clicked
-if (mouse_check_button_pressed(mb_left)){
-    //select mode (0)
-    if (mode==0 &amp;&amp; _team==turn){
-        //select piece
+// if clicked
+if (mouse_check_button_pressed(mb_left)) {
+
+    // select mode (0)
+    if (mode == 0 &amp;&amp; _team == turn) {
+        // select piece
         sel_type = _type;
+        sel_armour = _armour;
         sel_x = cell_x;
         sel_y = cell_y;
         mode = 1;
         
-        //check moveables
+        // check moveables
         moveable_clear();
         moveable_check(moveable, sel_x, sel_y, board, sel_type);
         
-        //sound
+        // sound
         audio_play_sound(snd_choose, 10, false);
     }
-    //move mode (1)
-    else if (mode==1){
-        //check for checks from the other side
-        check[turn] = false;
-        
-        //future board to know what is going to happen
-        var future_board = ds_grid_create(board_w, board_h);
-        ds_grid_copy(future_board, board);
-        
-        //move the piece in that board
-        board_set_cell(future_board, sel_x, sel_y, -1, type.empty);
-        board_set_cell(future_board, cell_x, cell_y, turn, sel_type);
-        
-        //check all pieces on opponent's team
-        turn = !turn;
-        for(var _h=0; _h&lt;board_h; _h++){
-            for(var _w=0; _w&lt;board_w; _w++){
-                //get array
-                var _ar = future_board[# _w, _h];
-                var _team = _ar[info.team];
-                var _type = _ar[info.type];
-                
-                //check
-                if (_team==turn){
-                    var temp_grid = ds_grid_create(board_w, board_h);
-                    moveable_check(temp_grid, _w, _h, future_board, _type);
-                    ds_grid_destroy(temp_grid);
+    
+    // move mode (1)
+    else if (mode==1) {
+        /// TEST FOR CHECK IN FUTURE MOVE
+        // Only do the test if the move is possible in the first place
+        if (moveable[# cell_x, cell_y]) {
+            check[turn] = false;
+            
+            // future board to know what is going to happen
+            var future_board = ds_grid_create(board_w, board_h);
+            ds_grid_copy(future_board, board);
+            
+            // move the piece in that board
+            board_set_cell(future_board, sel_x, sel_y, -1, type.empty, -1);
+            board_set_cell(future_board, cell_x, cell_y, turn, sel_type, sel_armour);
+            
+            // check all pieces on opponent's team
+            turn = !turn;
+            for (var _h=0; _h&lt;board_h; _h++) {
+                for (var _w=0; _w&lt;board_w; _w++) {
+                    // get array
+                    var _ar = future_board[# _w, _h];
+                    var _tm = _ar[info.team];
+                    var _tp = _ar[info.type];
+                    
+                    // check
+                    if (_tm == turn) {
+                        var temp_grid = ds_grid_create(board_w, board_h);
+                        moveable_check(temp_grid, _w, _h, future_board, _tp);
+                        ds_grid_destroy(temp_grid);
+                    }
+                    if (check[!turn]) break;
                 }
                 if (check[!turn]) break;
             }
-            if (check[!turn]) break;
-        }
-        turn = !turn;
-        
-        ds_grid_destroy(future_board);
-        //cancel move if check or if clicked on the same cell
-        if ((cell_x==sel_x &amp;&amp; cell_y==sel_y) || check[turn]){
-            mode--;
-            audio_play_sound(snd_cancel, 8, false);
+            turn = !turn;
             
-            //show check if checked
-            if (check[turn]){
+            ds_grid_destroy(future_board);
+        }
+        
+        
+        // DO MOVEMENT LOGIC
+        // cancel move if clicked on the same cell
+        if (cell_x == sel_x &amp;&amp; cell_y == sel_y) {
+            mode = 0;
+            audio_play_sound(snd_cancel, 8, false);
+        }
+        
+        // cancel move if clicked on a different piece, and then change to moving that piece
+        else if (_team == turn) {
+            // select piece
+            sel_type = _array[info.type];
+            sel_armour = _array[info.armour];
+            sel_x = cell_x;
+            sel_y = cell_y;
+            
+            // reset and check moveables
+            moveable_clear();
+            moveable_check(moveable, sel_x, sel_y, board, sel_type);
+            
+            // sound
+            audio_play_sound(snd_choose, 10, false);
+        }
+        
+        // otherwise allow piece to move to a moveable cell
+        else if (moveable[# cell_x, cell_y]) {
+        
+            // test if king is in check
+            if (check[turn]) {
                 check_show = true;
                 alarm[0] = 30;
+            } 
+            
+            // if king is not in check, move piece
+            else {
+                // set moving position
+                move_x = cell_x;
+                move_y = cell_y;
+                
+                // set animation position
+                anim_x = draw_x + sel_x*cell_size;
+                anim_y = draw_y + sel_y*cell_size;
+                
+                animated = false;
+                
+                // change mode
+                mode = 2;
+                
+                // sound
+                audio_play_sound(snd_move, 10, false);
+                audio_play_sound(snd_drag, 8, false);
             }
-            
-            //disable check
-            check[turn] = false;
-            
-            //recheck check
-            moveable_check(moveable, sel_x, sel_y, board, sel_type);
-        }
-        //register move
-        else if (moveable[# cell_x, cell_y]){
-            //set moving position
-            move_x = cell_x;
-            move_y = cell_y;
-            
-            //set animation position
-            anim_x = draw_x + sel_x*cell_size;
-            anim_y = draw_y + sel_y*cell_size;
-            
-            animated = false;
-            
-            //change mode
-            mode = 2;
-            
-            //sound
-            audio_play_sound(snd_move, 10, false);
-            audio_play_sound(snd_drag, 8, false);
         }
     }
 }
-    
-    
-    
-    
-    
-    
+
 </string>
           </argument>
         </arguments>
@@ -593,8 +626,6 @@ if (!mouse_out &amp;&amp; win == -1){
     
     if (_team == turn &amp;&amp; mode != 2) {
         draw_highlight(_xx, _yy, cursor_color_team);
-    } else {
-        //draw_highlight(_xx, _yy, cursor_color_simple);
     }
 }
 
@@ -611,22 +642,35 @@ for(var h=0; h&lt;board_h; h++){
         var _arr = board[# w, h];
         var _type = _arr[info.type];
         var _team = _arr[info.team];
+        var _armour = _arr[info.armour];
+        
         //set position to draw cell in pixels
         var _xx = draw_x + (w*cell_size);
         var _yy = draw_y + (h*cell_size);
+        
         //check if it is being moved
         var _moved = mode==2 &amp;&amp; sel_x==w &amp;&amp; sel_y==h;
+        
+        // only draw highlights if they're not being drawn for checks
+        
         //draw moveable cells in move mode
-        if (mode==1 &amp;&amp; moveable[# w, h]){
-            draw_highlight(_xx, _yy, moveable_color);
+        if (mode == 1 &amp;&amp; moveable[# w, h]) {
+            if (!check_show || (!(_xx==checking_x &amp;&amp; _yy==checking_y) &amp;&amp; !(_xx==checked_x &amp;&amp; _yy==checked_y))) {
+                draw_highlight(_xx, _yy, moveable_color);
+            }
         }
+        
         //draw selected
-        if (mode==1 &amp;&amp; sel_x==w &amp;&amp; sel_y==h){
-            draw_highlight(_xx, _yy, select_color);
+        if (mode == 1 &amp;&amp; sel_x==w &amp;&amp; sel_y==h){
+            if (!check_show || (!(_xx==checking_x &amp;&amp; _yy==checking_y) &amp;&amp; !(_xx==checked_x &amp;&amp; _yy==checked_y))) {
+                draw_highlight(_xx, _yy, select_color);
+            }
         }
+        
         //if not empty, draw piece
         if (_type!=type.empty &amp;&amp; !_moved){
             draw_sprite_ext(sprites[_type], 1-_team, _xx, _yy, 1, 1, 0, -1, 1);
+            draw_text(_xx, _yy, string(_armour));
         }
     }
 }

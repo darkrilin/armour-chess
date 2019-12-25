@@ -2,7 +2,7 @@
 //copies an array and returns the copy
 var new_array;
 
-for(var i=0; i<array_length_1d(argument0); i++){
+for (var i=0; i<array_length_1d(argument0); i++) {
     new_array[i] = argument0[i];
 }
 

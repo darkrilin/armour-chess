@@ -11,5 +11,5 @@ image_yscale = image_xscale;
 
 //button animation
 if (object_index!=obj_settings){
-    image_alpha = abs(obj_settings.x-x)/20;
+    image_alpha = abs(obj_settings.x-x)/32;
 }

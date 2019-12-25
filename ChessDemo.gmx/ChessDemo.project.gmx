@@ -14,6 +14,7 @@
   </sounds>
   <sprites name="sprites">
     <sprite>sprites\spr_board</sprite>
+    <sprite>sprites\spr_highlight</sprite>
     <sprites name="pieces">
       <sprite>sprites\spr_king</sprite>
       <sprite>sprites\spr_queen</sprite>
@@ -21,9 +22,6 @@
       <sprite>sprites\spr_bishop</sprite>
       <sprite>sprites\spr_knight</sprite>
       <sprite>sprites\spr_pawn</sprite>
-    </sprites>
-    <sprites name="Effects">
-      <sprite>sprites\spr_highlight</sprite>
     </sprites>
     <sprites name="UI">
       <sprite>sprites\spr_settings</sprite>
@@ -61,7 +59,7 @@
   </fonts>
   <objects name="objects">
     <object>objects\obj_chess</object>
-    <objects name="Settings">
+    <objects name="UI">
       <object>objects\obj_settings</object>
       <object>objects\obj_set_board</object>
     </objects>
