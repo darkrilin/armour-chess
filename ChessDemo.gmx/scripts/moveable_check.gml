@@ -33,9 +33,8 @@ for(var h=0; h<board_h; h++){
                 
                 // double move on start
                 if ((turn == 0 && _sel_y == 1) || (turn == 1 && _sel_y == board_h-2)){
-                    if (cell_dist(0, ver_dir*2, w, h, _sel_x, _sel_y)) {
+                    if (cell_dist(0, ver_dir*2, w, h, _sel_x, _sel_y) && check_path_empty(w, h, _sel_x, _sel_y, _board)) {
                         if (_team == -1) {  // can only move if space is empty
-                            // TODO: Make sure there's no piece in the way since pawns can currently "jump"
                             _grid[# w, h] = true;
                         }
                     }

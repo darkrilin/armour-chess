@@ -376,8 +376,6 @@ if (mode==2 &amp;&amp; animated) {
         // get all possible moves of the opponent
         turn = !turn;
         
-        all_moveable = ds_grid_create(board_w, board_h);
-        
         var all_moveable = ds_grid_create(board_w, board_h);
         for(var _h=0; _h&lt;board_h; _h++) {
             for(var _w=0; _w&lt;board_w; _w++) {
@@ -387,7 +385,7 @@ if (mode==2 &amp;&amp; animated) {
                 var _type = _ar[info.type];
                 
                 // check
-                if (_team==turn) {
+                if (_team == turn) {
                     moveable_check(all_moveable, _w, _h, board, _type);
                 }
             }
@@ -439,11 +437,6 @@ if (mode==2 &amp;&amp; animated) {
             }
             if (king_can_move) break;
         }
-        
-        /**/
-        show_debug_message("king_can_move: " + string(king_can_move));
-        show_debug_message("can_be_defeated: " + string(can_be_defeated));
-        /**/
         
         // check if the player has any chances
         if (!king_can_move &amp;&amp; !can_be_defeated) {
